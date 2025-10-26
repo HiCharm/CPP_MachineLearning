@@ -35,7 +35,7 @@ public:
 	}
 	// 析构
 	~Vec() {
-		delete data_;
+		data_.clear();
 	}
 
 	// set函数部分
