@@ -6,6 +6,16 @@
 using namespace std;
 
 template<typename T>
+class Vec;
+
+template<typename T>
+Vec<T> operator*(const T& BL, const Vec<T>& XL);
+template<typename T>
+Vec<T> operator*(const Vec<T>& XL, const T& BL);
+template<typename T>
+T operator*(const Vec<T>& XL1, const Vec<T>& XL2);
+
+template<typename T>
 class Vec {
 private:
 	// 维度
@@ -84,9 +94,9 @@ public:
 		return *this;
 	}
 
-	friend Vec<T> operator*(const T& BL, const Vec<T>& XL);
-	friend Vec<T> operator*(const Vec<T>& XL, const T& BL);
-	friend T operator*(const Vec<T>& XL1, const Vec<T>& XL2);
+	friend Vec<T> operator*<>(const T& BL, const Vec<T>& XL);
+	friend Vec<T> operator*<>(const Vec<T>& XL, const T& BL);
+	friend T operator*<>(const Vec<T>& XL1, const Vec<T>& XL2);
 
 	// 向量夹角的计算
 	double calc_angle_cos(const vecT& XL) {
@@ -119,6 +129,7 @@ T operator*(const Vec<T>& XL1, const Vec<T>& XL2) {
 	return res;
 }
 
+/*
 int main() {
 	Vec<double> v1(10);
 	Vec<double> v2(10);
@@ -126,13 +137,17 @@ int main() {
 		v1.set(i, i + 1);
 		v2.set(i, 2 * i);
 	}
-	Vec<double> v3 = v1 * 3;
-	v3 = v1 * v2;
+	Vec<double> v3;
+
+	v3 = 3.0 * v2;
 
 	for (auto a : v3.get_D()) {
 		cout << a << " ";
 	}
 	cout << endl;
 
+	cout << v1 * v2 << endl;
+
 	return 0;
 }
+*/
