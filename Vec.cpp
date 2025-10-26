@@ -84,9 +84,9 @@ public:
 		return *this;
 	}
 
-	friend vecT operator*(const T& BL, const vecT& XL);
-	friend vecT operator*(const vecT& XL, const T& BL);
-	friend T operator*(const vecT& XL1, const vecT& XL2);
+	friend Vec<T> operator*(const T& BL, const Vec<T>& XL);
+	friend Vec<T> operator*(const Vec<T>& XL, const T& BL);
+	friend T operator*(const Vec<T>& XL1, const Vec<T>& XL2);
 
 	// 向量夹角的计算
 	double calc_angle_cos(const vecT& XL) {
@@ -96,7 +96,7 @@ public:
 
 // 数乘运算
 template<typename T>
-Vec<T> operator*(const T& BL, const typename Vec<T>::vecT& XL) {
+Vec<T> operator*(const T& BL, const Vec<T>& XL) {
 	Vec<T> res(XL.N_);
 	for (int i = 0; i < XL.N_; i++) {
 		res.set(i, BL * XL.data_[i]);
@@ -105,13 +105,13 @@ Vec<T> operator*(const T& BL, const typename Vec<T>::vecT& XL) {
 }
 
 template<typename T>
-Vec<T> operator*(const typename Vec<T>::vecT& XL, const T& BL) {
+Vec<T> operator*(const Vec<T>& XL, const T& BL) {
 	return BL * XL;
 }
 
 // 点积运算
 template<typename T>
-T operator*(const typename Vec<T>::vecT& XL1, const typename Vec<T>::vecT& XL2) {
+T operator*(const Vec<T>& XL1, const Vec<T>& XL2) {
 	T res = 0;
 	for (int i = 0; i < XL1.N_; i++) {
 		res += XL1.data_[i] * XL2.data_[i];
