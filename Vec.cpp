@@ -1,84 +1,103 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <vector>
 #include <memory>
+#include <cmath>
 
 using namespace std;
 
-// ÕâÊÇÒ»¸öÏòÁ¿µÄ¶¨ÒåÀà
-/*
-ĞèÒª£º
-	1¡¢×Ô¶¨ÒåÎ¬¶È
-	2¡¢µã³Ë
-	3¡¢²æ³Ë
-	4¡¢
-*/
-
-//using Mat = shared_ptr<vector<vector<double>>>;
-//using vec = shared_ptr<vector<double>>;
-using Mat = vector<vector<double>>;
-using vec = vector<double>;
-
+template<typename T>
 class Vec {
-public:
-	int N;
-	vec vec_ = vec(N);
-	Vec(int N_) {
-		N = N_;
-	}
-	//~Vec();
+private:
+	// ç»´åº¦
+	int N_;
 
-	//double L2(vec& a);
-	void set(int index, double val) {
-		vec_[index] = val;
+	// æ•°æ®ç»“æ„
+	vector<T> data_;
+	
+	// ç®€å†™
+	using vecT = Vec<T>;
+
+public:
+	// é»˜è®¤æ„é€ å‡½æ•°
+	Vec(int N = 0) {
+		N_ = N;
+		data_.resize(N);
 	}
-	double dot(vec a, vec b) {
-		double ans = 0;
-		for (int i = 0; i < a.size(); i++) {
-			ans += a[i] * b[i];
+	// æ‹·è´æ„é€ å‡½æ•°
+	Vec(const Vec<T>& b) {
+		N_ = N;
+		data_ = b.data_;
+	}
+	// ç§»åŠ¨æ„é€ å‡½æ•°
+	Vec(Vec<T>&& b) {
+		N_ = N;
+		data_ = move(b.data_);
+	}
+	// ææ„
+	~Vec() {
+		delete data_;
+	}
+
+	// setå‡½æ•°éƒ¨åˆ†
+	//	æ³¨æ„ï¼šåªèƒ½ä¼ é€’å³å€¼
+	void set(int index, T &&val) { data_[index] = val; };
+
+	// getå‡½æ•°éƒ¨åˆ†
+	int get_N() { return N_; };
+	T get_V(int index) { return data_[index]; };
+	vector<T> get_D() { return data_; };
+
+	// æ¨¡çš„è®¡ç®—
+	double calc_mo() {
+		double res = 0;
+		for (int i = 0; i < N_; i++) {
+			res += data_[i] * data_[i];
+		}
+		return sqrt(res);
+	}
+
+	// é‡è½½è¿ç®—ç¬¦éƒ¨åˆ†
+	// åŠ æ³•é‡è½½
+	vecT operator+(const vecT& b) {
+		vecT ans(b.N_);
+		for (int i = 0; i < b.N_; i++) {
+			ans.set(i, data_[i] + b.data_[i]);
 		}
 		return ans;
 	}
-	//vec chacheng(vec& a, vec& b);
 
-};
-
-// ¾ØÕó¼Ì³ĞÏòÁ¿
-class Matrix : public Vec{
-public:
-	int N;// hang
-	int M;
-	Mat mat_ = Mat(N, vec(M));
-	Matrix(int N, int M);
-	~Matrix();
-
-	//double hanglieshi();
-	void set(int hang, int lie, double val) {
-		mat_[hang][lie] = val;
-	}
-	Matrix mutlipy(Matrix& a, Matrix& b);
-	Matrix T();
-	vec getvec(int i) {
-		return mat_[i];
-	}
-	//Mat qiuni(Mat& a);
-	//Mat qiuzhi(Mat& a);
-
-};
-
-Matrix Matrix::mutlipy(Matrix& a, Matrix& b) {
-	if (a.M != b.N) {
-		throw "¾ØÕó³Ë·¨²»ºÏ·¨";
-	}
-	b = b.T();
-	Matrix ans(a.N, b.M);
-
-	for (int i = 0; i < a.N; i++) {
-		for (int j = 0; j < b.N; j++) {
-			ans.set(i, j, dot(a.getvec(i),b.getvec(j)));
+	// å‡æ³•é‡è½½
+	vecT operator-(const vecT& b) {
+		vecT ans(b.N_);
+		for (int i = 0; i < b.N_; i++) {
+			ans.set(i, data_[i] - b.data_[i]);
 		}
+		return ans;
 	}
-	
-	return ans;
 
-}
+	// æ•°ä¹˜è¿ç®—
+	vecT operator*(const T& BL, const vecT& XL) {
+		vecT res(XL.N_);
+		for (int i = 0; i < XL.N_; i++) {
+			res.set(i, BL * XL.data_[i]);
+		}
+		return res;
+	}
+	vecT operator*(const vecT& XL, const T& BL) {
+		return BL * XL;
+	}
 
+	// ç‚¹ç§¯è¿ç®—
+	T operator*(const vecT& XL1, const vecT& XL2) {
+		T res = 0;
+		for (int i = 0; i < XL1.N_; i++) {
+			res += XL1.data_[i] * XL2.data_[i];
+		}
+		return res;
+	}
+
+	// å‘é‡å¤¹è§’çš„è®¡ç®—
+	double calc_angle_cos(const vecT& XL) {
+		return (XL * (*this)) / (calc_mo() * XL.calc_mo());
+	}
+};
