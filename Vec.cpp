@@ -25,12 +25,12 @@ public:
 	}
 	// 拷贝构造函数
 	Vec(const Vec<T>& b) {
-		N_ = N;
+		N_ = b.N_;
 		data_ = b.data_;
 	}
 	// 移动构造函数
 	Vec(Vec<T>&& b) {
-		N_ = N;
+		N_ = b.N_;
 		data_ = move(b.data_);
 	}
 	// 析构
@@ -75,29 +75,37 @@ public:
 		return ans;
 	}
 
-	// 数乘运算
-	vecT operator*(const T& BL, const vecT& XL) {
-		vecT res(XL.N_);
-		for (int i = 0; i < XL.N_; i++) {
-			res.set(i, BL * XL.data_[i]);
-		}
-		return res;
-	}
-	vecT operator*(const vecT& XL, const T& BL) {
-		return BL * XL;
-	}
-
-	// 点积运算
-	T operator*(const vecT& XL1, const vecT& XL2) {
-		T res = 0;
-		for (int i = 0; i < XL1.N_; i++) {
-			res += XL1.data_[i] * XL2.data_[i];
-		}
-		return res;
-	}
+	friend vecT operator*(const T& BL, const vecT& XL);
+	friend vecT operator*(const vecT& XL, const T& BL);
+	friend T operator*(const vecT& XL1, const vecT& XL2);
 
 	// 向量夹角的计算
 	double calc_angle_cos(const vecT& XL) {
 		return (XL * (*this)) / (calc_mo() * XL.calc_mo());
 	}
 };
+
+// 数乘运算
+template<typename T>
+Vec<T> operator*(const T& BL, const typename Vec<T>::vecT& XL) {
+	Vec<T> res(XL.N_);
+	for (int i = 0; i < XL.N_; i++) {
+		res.set(i, BL * XL.data_[i]);
+	}
+	return res;
+}
+
+template<typename T>
+Vec<T> operator*(const typename Vec<T>::vecT& XL, const T& BL) {
+	return BL * XL;
+}
+
+// 点积运算
+template<typename T>
+T operator*(const typename Vec<T>::vecT& XL1, const typename Vec<T>::vecT& XL2) {
+	T res = 0;
+	for (int i = 0; i < XL1.N_; i++) {
+		res += XL1.data_[i] * XL2.data_[i];
+	}
+	return res;
+}
