@@ -75,6 +75,15 @@ public:
 		return ans;
 	}
 
+	// 等号重载
+	vecT& operator=(const vecT& b) {
+		if (&b != this) {
+			N_ = b.N_;
+			data_ = b.data_;
+		}
+		return *this;
+	}
+
 	friend vecT operator*(const T& BL, const vecT& XL);
 	friend vecT operator*(const vecT& XL, const T& BL);
 	friend T operator*(const vecT& XL1, const vecT& XL2);
@@ -108,4 +117,22 @@ T operator*(const typename Vec<T>::vecT& XL1, const typename Vec<T>::vecT& XL2) 
 		res += XL1.data_[i] * XL2.data_[i];
 	}
 	return res;
+}
+
+int main() {
+	Vec<double> v1(10);
+	Vec<double> v2(10);
+	for (int i = 0; i < 10; i++) {
+		v1.set(i, i + 1);
+		v2.set(i, 2 * i);
+	}
+	Vec<double> v3 = v1 * 3;
+	v3 = v1 * v2;
+
+	for (auto a : v3.get_D()) {
+		cout << a << " ";
+	}
+	cout << endl;
+
+	return 0;
 }
