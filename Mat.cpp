@@ -1,4 +1,4 @@
-#ifndef MATCPP
+ï»¿#ifndef MATCPP
 #define MATCPP
 
 #include <iostream>
@@ -15,26 +15,26 @@ Mat<T> operator*(const T& BL, const Mat<T>& JZ);
 template<typename T>
 class Mat {
 private:
-	int N_;// ĞĞ
-	int M_;// ÁĞ
+	int N_;// è¡Œ
+	int M_;// åˆ—
 	using matT = vector<vector<T>>;
 	using vecT = vector<T>;
 	matT data_;
 public:
-	// ¹¹Ôìº¯Êı
+	// æ„é€ å‡½æ•°
 	Mat(int N = 0, int M = 0) {
 		data_.resize(N, vecT(M));
 		N_ = N;
 		M_ = M;
 	}
-	// ¿½±´¹¹Ôìº¯Êı
+	// æ‹·è´æ„é€ å‡½æ•°
 	Mat(const Mat& other) {
 		data_.clear();
 		data_ = other.data_;
 		N_ = other.N_;
 		M_ = other.M_;
 	}
-	// ÒÆ¶¯¹¹Ôìº¯Êı
+	// ç§»åŠ¨æ„é€ å‡½æ•°
 	Mat(const Mat&& other) {
 		data_ = move(other.data_);
 		N_ = other.N_;
@@ -53,18 +53,18 @@ public:
 		return *this;
 	}
 
-	// getº¯Êı²¿·Ö
+	// getå‡½æ•°éƒ¨åˆ†
 	int get_N() { return N_; }
 	int get_M() { return M_; }
 	matT get_D() { return data_; }
 	T get_T(int hang, int lie) { return data_[hang][lie]; }
 
-	// setº¯Êı²¿·Ö
+	// setå‡½æ•°éƒ¨åˆ†
 	void set(int hang, int lie, T val) {
 		data_[hang][lie] = val;
 	}
 
-	// ¾ØÕó¼Ó·¨
+	// çŸ©é˜µåŠ æ³•
 	Mat<T> operator+(Mat<T>& b) {
 		Mat<T> ans(b.N_,b.M_);
 		for (int i = 0; i < b.N_; i++) {
@@ -75,7 +75,7 @@ public:
 		return ans;
 	}
 
-	// ¾ØÕó¼õ·¨
+	// çŸ©é˜µå‡æ³•
 	Mat<T> operator-(Mat<T>& b) {
 		Mat<T> ans(b.N_, b.M_);
 		for (int i = 0; i < b.N_; i++) {
@@ -86,13 +86,13 @@ public:
 		return ans;
 	}
 
-	// ¾ØÕóÊı³Ë
+	// çŸ©é˜µæ•°ä¹˜
 	friend Mat<T> operator*<>(const T& BL, const Mat<T>& JZ);
 
-	// ¾ØÕó³Ë·¨
+	// çŸ©é˜µä¹˜æ³•
 	Mat<T> operator*(const Mat<T>& b) {
 		if (M_ != b.N_) {
-			throw "¾ØÕó³Ë·¨²»ºÏ·¨";
+			throw "çŸ©é˜µä¹˜æ³•ä¸åˆæ³•";
 		}
 		Mat<T> ans(N_, b.M_);
 		for (int i = 0; i < N_; i++) {
@@ -107,7 +107,7 @@ public:
 		return ans;
 	}
 
-	// ¾ØÕó×ªÖÃ
+	// çŸ©é˜µè½¬ç½®
 	Mat<T> T_() {
 		Mat<T> ans(M_,N_);
 		for (int i = 0; i < N_; i++) {
@@ -118,39 +118,39 @@ public:
 		return ans;
 	}
 
-	// ¾ØÕóÇóĞĞÁĞÊ½
+	// çŸ©é˜µæ±‚è¡Œåˆ—å¼
 	T det() {
 		if (N_ != M_) {
-			throw "·Ç·½Õó²»ÄÜËãĞĞÁĞÊ½";
+			throw "éæ–¹é˜µä¸èƒ½ç®—è¡Œåˆ—å¼";
 		}
 		if (N_ == 2) {
 			return data_[0][0] * data_[1][1] - data_[1][0] * data_[0][1];
 		}
 		T ans = 0;
-		// Ä¬ÈÏ°´µÚÒ»ĞĞÕ¹¿ª
+		// é»˜è®¤æŒ‰ç¬¬ä¸€è¡Œå±•å¼€
 		for (int i = 0; i < M_; i++) {
 			ans += data_[0][i]* Cij(0, i);
 		}
 		return ans;
 	}
 
-	// ¾ØÕóÇóĞĞÁĞÊ½
+	// çŸ©é˜µæ±‚è¡Œåˆ—å¼
 	T det(Mat<T>& a) {
 		if (a.N_ != a.M_) {
-			throw "·Ç·½Õó²»ÄÜËãĞĞÁĞÊ½";
+			throw "éæ–¹é˜µä¸èƒ½ç®—è¡Œåˆ—å¼";
 		}
 		if (a.N_ == 2) {
 			return a.get_T(0, 0) * a.get_T(1, 1) - a.get_T(0, 1) * a.get_T(1, 0);
 		}
 		T ans = 0;
-		// Ä¬ÈÏ°´µÚÒ»ĞĞÕ¹¿ª
+		// é»˜è®¤æŒ‰ç¬¬ä¸€è¡Œå±•å¼€
 		for (int i = 0; i < a.M_; i++) {
 			ans += a.get_T(0, i) * Cij(a, 0, i);
 		}
 		return ans;
 	}
 
-	// ¾ØÕóÇó´úÊıÓà×ÓÊ½
+	// çŸ©é˜µæ±‚ä»£æ•°ä½™å­å¼
 	T Cij(int hang, int lie) {
 		Mat<T> ans(N_ - 1, M_ - 1);
 		int k = 0;
@@ -165,7 +165,7 @@ public:
 		}
 		return ((hang + lie) % 2 == 0 ? 1 : -1) * ans.det();
 	}
-	// ¾ØÕóÇó´úÊıÓà×ÓÊ½
+	// çŸ©é˜µæ±‚ä»£æ•°ä½™å­å¼
 	T Cij(Mat<T>& a, int hang, int lie) {
 		Mat<T> ans(a.N_ - 1, a.M_ - 1);
 		int k = 0;
@@ -181,12 +181,12 @@ public:
 		return ((hang + lie) % 2 == 0 ? 1 : -1) * ans.det();
 	}
 
-	// ¾ØÕóÇóÄæ
+	// çŸ©é˜µæ±‚é€†
 	Mat<T> ni() {
 		Mat<T> ans(N_, M_);
 		T det_a = this->det();
 		if (det_a == 0) {
-			throw "ĞĞÁĞÊ½Îª0£¬²»ÄÜÇóÄæ";
+			throw "è¡Œåˆ—å¼ä¸º0ï¼Œä¸èƒ½æ±‚é€†";
 		}
 		for (int i = 0; i < N_; i++) {
 			for (int j = 0; j < M_; j++) {
@@ -197,7 +197,7 @@ public:
 	}
 };
 
-// ¾ØÕóÊı³Ë
+// çŸ©é˜µæ•°ä¹˜
 template<typename T>
 Mat<T> operator*(const T& BL, const Mat<T>& JZ) {
 	Mat<T> ans(JZ);
@@ -209,7 +209,7 @@ Mat<T> operator*(const T& BL, const Mat<T>& JZ) {
 	return ans;
 }
 
-// ¾ØÕó´òÓ¡
+// çŸ©é˜µæ‰“å°
 template<typename T>
 void print(Mat<T>& a) {
 	cout << "Mat" << endl;
@@ -222,9 +222,9 @@ void print(Mat<T>& a) {
 }
 
 //int main() {
-//	// ²âÊÔ¾ØÕó³Ë·¨
+//	// æµ‹è¯•çŸ©é˜µä¹˜æ³•
 //
-//	// ´´½¨Ò»¸ö¾ØÕó
+//	// åˆ›å»ºä¸€ä¸ªçŸ©é˜µ
 //	Mat<double> m1(3, 3);
 //	for (int i = 0;i < 3; i++) {
 //		for (int j = 0; j < 3; j++) {
@@ -245,7 +245,7 @@ void print(Mat<T>& a) {
 //
 //	print(m1);
 //
-//	cout << "m1µÄĞĞÁĞÊ½ " << m1.det() << endl;
+//	cout << "m1çš„è¡Œåˆ—å¼ " << m1.det() << endl;
 //	print(m1);
 //	Mat<double> m3 = m1.ni();
 //	print(m3);
