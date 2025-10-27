@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 template<typename T>
@@ -105,6 +106,95 @@ public:
 		}
 		return ans;
 	}
+
+	// 矩阵转置
+	Mat<T> T_() {
+		Mat<T> ans(M_,N_);
+		for (int i = 0; i < N_; i++) {
+			for (int j = 0; j < M_; j++) {
+				ans.data_[j][i] = data_[i][j];
+			}
+		}
+		return ans;
+	}
+
+	// 矩阵求行列式
+	T det() {
+		if (N_ != M_) {
+			throw "非方阵不能算行列式";
+		}
+		if (N_ == 2) {
+			return data_[0][0] * data_[1][1] - data_[1][0] * data_[0][1];
+		}
+		T ans = 0;
+		// 默认按第一行展开
+		for (int i = 0; i < M_; i++) {
+			ans += data_[0][i]* Cij(0, i);
+		}
+		return ans;
+	}
+
+	// 矩阵求行列式
+	T det(Mat<T>& a) {
+		if (a.N_ != a.M_) {
+			throw "非方阵不能算行列式";
+		}
+		if (a.N_ == 2) {
+			return a.get_T(0, 0) * a.get_T(1, 1) - a.get_T(0, 1) * a.get_T(1, 0);
+		}
+		T ans = 0;
+		// 默认按第一行展开
+		for (int i = 0; i < a.M_; i++) {
+			ans += a.get_T(0, i) * Cij(a, 0, i);
+		}
+		return ans;
+	}
+
+	// 矩阵求代数余子式
+	T Cij(int hang, int lie) {
+		Mat<T> ans(N_ - 1, M_ - 1);
+		int k = 0;
+		for (int i = 0; i < N_; i++) {
+			for (int j = 0; j < M_; j++) {
+				if (i == hang || j == lie) {
+					continue;
+				}
+				ans.data_[k / (M_ - 1)][k % (M_ - 1)] = data_[i][j];
+				k++;
+			}
+		}
+		return ((hang + lie) % 2 == 0 ? 1 : -1) * ans.det();
+	}
+	// 矩阵求代数余子式
+	T Cij(Mat<T>& a, int hang, int lie) {
+		Mat<T> ans(a.N_ - 1, a.M_ - 1);
+		int k = 0;
+		for (int i = 0; i < a.N_; i++) {
+			for (int j = 0; j < a.M_; j++) {
+				if (i == hang || j == lie) {
+					continue;
+				}
+				ans.data_[k / (a.M_-1)][k % (a.M_-1)] = a.get_T(i, j);
+				k++;
+			}
+		}
+		return ((hang + lie) % 2 == 0 ? 1 : -1) * ans.det();
+	}
+
+	// 矩阵求逆
+	Mat<T> ni() {
+		Mat<T> ans(N_, M_);
+		T det_a = this->det();
+		if (det_a == 0) {
+			throw "行列式为0，不能求逆";
+		}
+		for (int i = 0; i < N_; i++) {
+			for (int j = 0; j < M_; j++) {
+				ans.data_[i][j] = Cij(i, j) / det_a;
+			}
+		}
+		return ans;
+	}
 };
 
 // 矩阵数乘
@@ -134,15 +224,15 @@ void print(Mat<T>& a) {
 //int main() {
 //	// 测试矩阵乘法
 //
-//	// 创建一个全1矩阵
-//	Mat<int> m1(3, 3);
+//	// 创建一个矩阵
+//	Mat<double> m1(3, 3);
 //	for (int i = 0;i < 3; i++) {
 //		for (int j = 0; j < 3; j++) {
-//			m1.set(i, j, 1);
+//			m1.set(i, j, (i==j?1:0));
 //		}
 //	}
 //
-//	Mat<int> m2(3, 4);
+//	Mat<double> m2(3, 4);
 //	for (int i = 0;i < 3; i++) {
 //		for (int j = 0; j < 4; j++) {
 //			m2.set(i, j, 2);
@@ -151,14 +241,26 @@ void print(Mat<T>& a) {
 //
 //	print(m1);
 //
-//	m1 = 3 * m1;
+//	m1 = 3.0 * m1;
 //
 //	print(m1);
+//
+//	cout << "m1的行列式 " << m1.det() << endl;
+//	print(m1);
+//	Mat<double> m3 = m1.ni();
+//	print(m3);
+//
 //	print(m2);
 //
 //	m2 = m1 * m2;
 //
 //	print(m2);
+//
+//	m2 = m2.T_();
+//
+//	print(m2);
+//
+//
 //
 //	return 0;
 //}
