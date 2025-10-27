@@ -1,4 +1,6 @@
-﻿#include <iostream>
+﻿#ifndef VECCPP
+#define VECCPP
+#include <iostream>
 #include <vector>
 #include <memory>
 #include <cmath>
@@ -67,6 +69,7 @@ public:
 	}
 
 	// 重载运算符部分
+	
 	// 加法重载
 	vecT operator+(const vecT& b) {
 		vecT ans(b.N_);
@@ -151,3 +154,5 @@ int main() {
 	return 0;
 }
 */
+
+#endif

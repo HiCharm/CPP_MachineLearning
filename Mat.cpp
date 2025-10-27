@@ -1,3 +1,6 @@
+#ifndef MATCPP
+#define MATCPP
+
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -53,6 +56,7 @@ public:
 	int get_N() { return N_; }
 	int get_M() { return M_; }
 	matT get_D() { return data_; }
+	T get_T(int hang, int lie) { return data_[hang][lie]; }
 
 	// set函数部分
 	void set(int hang, int lie, T val) {
@@ -91,26 +95,72 @@ public:
 		}
 		Mat<T> ans(N_, b.M_);
 		for (int i = 0; i < N_; i++) {
-			for (int j = 0; j < M_; j++) {
+			for (int j = 0; j < b.M_; j++) {
 				double sum = 0;
 				for (int k = 0; k < M_; k++) {
 					sum += data_[i][k] * b.data_[k][j];
 				}
-				ans[i][j] = sum;
+				ans.set(i, j, sum);
 			}
 		}
 		return ans;
 	}
 };
 
+// 矩阵数乘
 template<typename T>
 Mat<T> operator*(const T& BL, const Mat<T>& JZ) {
 	Mat<T> ans(JZ);
 	for (int i = 0; i < JZ.N_; i++) {
 		for (int j = 0; j < JZ.M_; j++) {
-			ans[i][j] *= BL;
+			ans.set(i, j, ans.get_T(i, j) * BL);
 		}
 	}
 	return ans;
 }
 
+// 矩阵打印
+template<typename T>
+void print(Mat<T>& a) {
+	cout << "Mat" << endl;
+	for (int i = 0; i < a.get_N(); i++) {
+		for (int j = 0; j < a.get_M(); j++) {
+			cout << a.get_T(i, j) << " ";
+		}
+		cout << endl;
+	}
+}
+
+//int main() {
+//	// 测试矩阵乘法
+//
+//	// 创建一个全1矩阵
+//	Mat<int> m1(3, 3);
+//	for (int i = 0;i < 3; i++) {
+//		for (int j = 0; j < 3; j++) {
+//			m1.set(i, j, 1);
+//		}
+//	}
+//
+//	Mat<int> m2(3, 4);
+//	for (int i = 0;i < 3; i++) {
+//		for (int j = 0; j < 4; j++) {
+//			m2.set(i, j, 2);
+//		}
+//	}
+//
+//	print(m1);
+//
+//	m1 = 3 * m1;
+//
+//	print(m1);
+//	print(m2);
+//
+//	m2 = m1 * m2;
+//
+//	print(m2);
+//
+//	return 0;
+//}
+
+#endif
