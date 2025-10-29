@@ -10,6 +10,14 @@ Vec.cpp 向量类
 
 Mat.cpp 矩阵类
 
+DataLoader.cpp 数据读取类
+
+Sigmod.cpp Sigmod 激活函数
+
+MLpolicy.cpp ML接口类
+
+Logistic.cpp 逻辑回归分类器
+
 需要：
 
  	机器学习的数学工具集
