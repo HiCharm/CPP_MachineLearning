@@ -1,5 +1,6 @@
 ﻿#ifndef VECCPP
 #define VECCPP
+
 #include <iostream>
 #include <vector>
 #include <memory>

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 using namespace std;
 
 template<typename T>
@@ -22,8 +23,17 @@ private:
 	matT data_;
 public:
 	// 构造函数
-	Mat(int N = 0, int M = 0) {
+	Mat() {
+		N_ = 0;
+		M_ = 0;
+	}
+	Mat(int N, int M) {
 		data_.resize(N, vecT(M));
+		N_ = N;
+		M_ = M;
+	}
+	Mat(int N, int M, T val) {
+		data_.resize(N, vecT(M, val));
 		N_ = N;
 		M_ = M;
 	}
@@ -69,7 +79,15 @@ public:
 		Mat<T> ans(b.N_,b.M_);
 		for (int i = 0; i < b.N_; i++) {
 			for (int j = 0; j < b.M_; j++) {
-				ans[i][j] = data_[i][j] + b.data_[i][j];
+				ans.data_[i][j] = data_[i][j] + b.data_[i][j];
+			}
+		}
+		return ans;
+	}Mat<T> operator+(Mat<T>&& b) {
+		Mat<T> ans(b.N_, b.M_);
+		for (int i = 0; i < b.N_; i++) {
+			for (int j = 0; j < b.M_; j++) {
+				ans.data_[i][j] = data_[i][j] + b.data_[i][j];
 			}
 		}
 		return ans;
@@ -80,12 +98,20 @@ public:
 		Mat<T> ans(b.N_, b.M_);
 		for (int i = 0; i < b.N_; i++) {
 			for (int j = 0; j < b.M_; j++) {
-				ans[i][j] = data_[i][j] - b.data_[i][j];
+				ans.data_[i][j] = data_[i][j] - b.data_[i][j];
 			}
 		}
 		return ans;
 	}
-
+	Mat<T> operator-(Mat<T>&& b) {
+		Mat<T> ans(b.N_, b.M_);
+		for (int i = 0; i < b.N_; i++) {
+			for (int j = 0; j < b.M_; j++) {
+				ans.data_[i][j] = data_[i][j] - b.data_[i][j];
+			}
+		}
+		return ans;
+	}
 	// 矩阵数乘
 	friend Mat<T> operator*<>(const T& BL, const Mat<T>& JZ);
 
@@ -134,22 +160,6 @@ public:
 		return ans;
 	}
 
-	// 矩阵求行列式
-	T det(Mat<T>& a) {
-		if (a.N_ != a.M_) {
-			throw "非方阵不能算行列式";
-		}
-		if (a.N_ == 2) {
-			return a.get_T(0, 0) * a.get_T(1, 1) - a.get_T(0, 1) * a.get_T(1, 0);
-		}
-		T ans = 0;
-		// 默认按第一行展开
-		for (int i = 0; i < a.M_; i++) {
-			ans += a.get_T(0, i) * Cij(a, 0, i);
-		}
-		return ans;
-	}
-
 	// 矩阵求代数余子式
 	T Cij(int hang, int lie) {
 		Mat<T> ans(N_ - 1, M_ - 1);
@@ -160,21 +170,6 @@ public:
 					continue;
 				}
 				ans.data_[k / (M_ - 1)][k % (M_ - 1)] = data_[i][j];
-				k++;
-			}
-		}
-		return ((hang + lie) % 2 == 0 ? 1 : -1) * ans.det();
-	}
-	// 矩阵求代数余子式
-	T Cij(Mat<T>& a, int hang, int lie) {
-		Mat<T> ans(a.N_ - 1, a.M_ - 1);
-		int k = 0;
-		for (int i = 0; i < a.N_; i++) {
-			for (int j = 0; j < a.M_; j++) {
-				if (i == hang || j == lie) {
-					continue;
-				}
-				ans.data_[k / (a.M_-1)][k % (a.M_-1)] = a.get_T(i, j);
 				k++;
 			}
 		}
@@ -191,6 +186,70 @@ public:
 		for (int i = 0; i < N_; i++) {
 			for (int j = 0; j < M_; j++) {
 				ans.data_[i][j] = Cij(i, j) / det_a;
+			}
+		}
+		return ans;
+	}
+
+	// 矩阵增加一列
+	void add_lie(T val) {
+		M_++;
+		for (auto& a : data_) {
+			a.push_back(val);
+		}
+	}
+
+	// 矩阵求均值
+	Mat<T> calc_means() {
+		Mat<T> ans(1, M_);
+		if (N_ == 0 || M_ == 0) {
+			return ans;
+		}
+		for (int i = 0; i < M_; i++) {
+			T sum = 0;
+			for (int j = 0; j < N_; j++) {
+				sum += data_[j][i];
+			}
+			ans.data_[0][i] = sum / N_;
+		}
+		return ans;
+	}
+
+	// 矩阵求标准差
+	Mat<T> calc_stds() {
+		Mat<T> ans(1, M_);
+		if (N_ == 0 || M_ == 0) {
+			return ans;
+		}
+		Mat<T> means = calc_means();
+		for (int i = 0; i < M_; i++) {
+			T sum_sq = 0;
+			for (int j = 0; j < N_; j++) {
+				T diff = data_[j][i] - means.data_[0][i];
+				sum_sq += diff * diff;
+			}
+			ans.data_[0][i] = sqrt(sum_sq / N_);
+		}
+		return ans;
+	}
+
+	Mat<T> Z_scores() {
+		Mat<T> ans(N_, M_);
+		if (N_ == 0 || M_ == 0) {
+			throw "矩阵是空的";
+		}
+		Mat<T> means = calc_means();
+		Mat<T> stds = calc_stds();
+
+		for (int j = 0; j < M_; j++) {
+			T std = stds.data_[0][j];
+			for (int i = 0; i < N_; i++) {
+				if (std == 0) {
+					ans.data_[i][j] = 0;
+				}
+				else {
+					ans.data_[i][j] = (data_[i][j] - means.data_[0][j]) / std;
+				}
 			}
 		}
 		return ans;

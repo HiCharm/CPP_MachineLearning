@@ -61,7 +61,7 @@ public:
 		csv_data.close();
 	}
 
-	// r:分割比例，shuffle:是否打乱
+	// r:分割比例越大train越大，shuffle:是否打乱
 	void set_phram(double r, bool shuffle_) {
 		ratio = r;
 		index.resize(N_);
