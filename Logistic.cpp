@@ -18,9 +18,7 @@ private:
 	int m;
 	Mat<T> w;
 	double lr = 0;;
-
-	double last_loss = 0;
-	double mid = 0;
+	double judge_line = 0.5;
 
 public:
 	Logistic() {
@@ -47,6 +45,7 @@ public:
 		for (int i = 0; i < epoch; i++) {
 			Mat<T> h = t_data * w;
 			h = sigmod_mat(h);
+			h = h.judge(judge_line);
 			err = t_label - h;
 			cout << "epoch: " << i << endl;
 			loss(err);
@@ -59,23 +58,11 @@ public:
 		for (int i = 0; i < err.get_N(); i++) {
 			sum += abs(err.get_T(i, 0));
 		}
-		if (last_loss < mid && sum > mid) {
-			lr /= 1.1;
-		}
-		else if (last_loss > mid && sum < mid) {
-			lr /= 1.1;
-		}
-		else {
-			lr *= 1.1;
-		}
-		mid = (sum + last_loss) / 2;
-		
-		last_loss = sum;
 		cout << "loss: " << sum << endl;
 	}
 
 	void value()override {
-		double judge_line = 0.5;
+		
 		v_data.add_lie(1.0);
 
 		Mat<T> h = v_data * w;

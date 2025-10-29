@@ -254,6 +254,21 @@ public:
 		}
 		return ans;
 	}
+
+	Mat<T> judge(double a) {
+		Mat<T> ans(N_, M_);
+		for (int i = 0; i < N_; i++) {
+			for (int j = 0; j < M_; j++) {
+				if (data_[i][j] > a) {
+					ans.data_[i][j] = 1;
+				}
+				else {
+					ans.data_[i][j] = 0;
+				}
+			}
+		}
+		return ans;
+	}
 };
 
 // 矩阵数乘
