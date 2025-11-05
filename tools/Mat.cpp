@@ -20,8 +20,9 @@ private:
 	int M_;// 列
 	using matT = vector<vector<T>>;
 	using vecT = vector<T>;
-	matT data_;
+	
 public:
+	matT data_;
 	// 构造函数
 	Mat() {
 		N_ = 0;
@@ -199,6 +200,16 @@ public:
 		}
 	}
 
+	// 矩阵增加一行
+	void add_hang(T val) {
+		N_++;
+		data_.push_back(vector<T>(M_, val));
+	}
+	void add_hang(vector<T>& hang) {
+		N_++;
+		data_.push_back(hang);
+	}
+
 	// 矩阵求均值
 	Mat<T> calc_means() {
 		Mat<T> ans(1, M_);
@@ -232,7 +243,7 @@ public:
 		}
 		return ans;
 	}
-
+	// 矩阵标准化
 	Mat<T> Z_scores() {
 		Mat<T> ans(N_, M_);
 		if (N_ == 0 || M_ == 0) {
@@ -255,6 +266,7 @@ public:
 		return ans;
 	}
 
+	// 矩阵过滤器
 	Mat<T> judge(double a) {
 		Mat<T> ans(N_, M_);
 		for (int i = 0; i < N_; i++) {
@@ -268,6 +280,34 @@ public:
 			}
 		}
 		return ans;
+	}
+
+	// 矩阵分批次获取
+	Mat<T> batch_get(int batch, int times) {
+		int len = batch;
+		if (batch * times > N_) {
+			len = N_ - batch * (times - 1);
+		}
+		Mat<T> ans(len, M_);
+
+		for (int i = 0; i < len; i++) {
+			for (int j = 0; j < M_; j++) {
+				ans.data_[i][j] = data_[batch * times + i][j];
+			}
+		}
+		return ans;
+	}
+
+	// 矩阵一列的最大和最小值
+	void get_min_and_max(int lie, double& min, double& max) {
+		min = 9999;
+		max = 0;
+		double temp = 0;
+		for (int i = 0; i < N_; i++) {
+			temp = data_[i][lie];
+			if (temp > max) max = temp;
+			if (temp < min)min = temp;
+		}
 	}
 };
 
