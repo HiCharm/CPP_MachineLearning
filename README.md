@@ -18,6 +18,8 @@ MLpolicy.cpp ML接口类
 
 Logistic.cpp 逻辑回归分类器
 
+Decision_tree.cpp 决策树分类器
+
 需要：
 
  	机器学习的数学工具集
