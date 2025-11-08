@@ -282,6 +282,22 @@ public:
 		return ans;
 	}
 
+	// 矩阵自身过滤 判断小于条件 满足则为 不满足则为 是否考虑不满足则为
+	void judge(double line, double no, double yes, bool is_change_yes = yes) {
+		for (int i = 0; i < N_; i++) {
+			for (int j = 0; j < M_; j++) {
+				if (data_[i][j] < line) {
+					data_[i][j] = no;
+				}
+				else {
+					if (is_change_yes) {
+						data_[i][j] = yes;
+					}
+				}
+			}
+		}
+	}
+
 	// 矩阵分批次获取
 	Mat<T> batch_get(int batch, int times) {
 		int len = batch;
@@ -308,6 +324,24 @@ public:
 			if (temp > max) max = temp;
 			if (temp < min)min = temp;
 		}
+	}
+
+	// 自己的第i行和另一个矩阵的第j行求点积
+	T dot(Mat<T>& b, int x, int y) {
+		T sum = 0;
+		for (int i = 0;i < M_; i++) {
+			sum += data_[x][i] * b.data_[y][i];
+		}
+		return sum;
+	}
+
+	// 求第i行的L2范数
+	T L2(int i) {
+		T sum = 0;
+		for (int j = 0; j < M_; j++) {
+			sum += data_[i][j] * data_[i][j];
+		}
+		return sqrt(sum);
 	}
 };
 
